@@ -36,13 +36,13 @@ export default function Header({ currentRoute, locale = 'zh' }: HeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#080b11]/95 backdrop-blur-md border-b border-zinc-850 shadow-xl">
+    <header className="sticky top-0 z-40 bg-[#080b11]/95 backdrop-blur-md border-b border-zinc-800 shadow-2xl">
       {/* 顶部主 Branding 栏 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         
         {/* 左侧 OKX 品牌 */}
         <Link href={isHant ? "/hant/" : "/"} className="flex items-center gap-2.5 group cursor-pointer select-none">
-          <div className="flex items-center justify-center w-8 h-8 bg-yellow-500 text-black rounded-lg font-black tracking-tight text-xs font-mono shrink-0 shadow-md group-hover:scale-105 transition-transform">
+          <div className="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-lg font-black tracking-tight text-xs font-mono shrink-0 shadow-md shadow-blue-600/30 group-hover:scale-105 transition-transform">
             <span>OKX</span>
           </div>
           <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export default function Header({ currentRoute, locale = 'zh' }: HeaderProps) {
                   href={currentRoute === "home" ? "/" : `/${currentRoute}/`}
                   onClick={() => setIsLangOpen(false)}
                   className={`flex items-center justify-between px-3.5 py-2 text-xs transition ${
-                    !isHant ? 'text-yellow-400 font-bold bg-yellow-500/10' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                    !isHant ? 'text-blue-400 font-bold bg-blue-500/10' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
                   }`}
                 >
                   <span>简体中文</span>
@@ -84,7 +84,7 @@ export default function Header({ currentRoute, locale = 'zh' }: HeaderProps) {
                   href={currentRoute === "home" ? "/hant/" : `/hant/${currentRoute}/`}
                   onClick={() => setIsLangOpen(false)}
                   className={`flex items-center justify-between px-3.5 py-2 text-xs transition ${
-                    isHant ? 'text-yellow-400 font-bold bg-yellow-500/10' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                    isHant ? 'text-blue-400 font-bold bg-blue-500/10' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
                   }`}
                 >
                   <span>繁體中文</span>
@@ -93,19 +93,20 @@ export default function Header({ currentRoute, locale = 'zh' }: HeaderProps) {
             )}
           </div>
 
-          {/* 直达按钮 */}
+          {/* 科技蓝直达按钮 */}
           <button 
             data-cta="true"
-            className="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold text-xs px-3.5 py-1.5 rounded-lg shadow-sm shadow-yellow-500/20 transition active:scale-95 cursor-pointer select-none"
+            className="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-lg shadow-md shadow-blue-600/25 transition active:scale-95 cursor-pointer select-none"
           >
             <span>{isHant ? "安全直達" : "安全直达"}</span>
           </button>
         </div>
       </div>
 
-      {/* 极简自然流动的横向滑动导航条 */}
-      <div className="bg-[#05070a] border-t border-zinc-850 px-2 sm:px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-start md:justify-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2">
+      {/* 手机端平铺网格 + PC 端平滑导航栏 (100% 全部展现，杜绝截断) */}
+      <div className="bg-[#05070a] border-t border-zinc-850 p-2 sm:px-4">
+        {/* 移动端平铺网格 (4列网格一目了然) */}
+        <div className="grid grid-cols-4 gap-1.5 md:hidden">
           {keywordKeys.map((key) => {
             const page = seoData[key];
             if (!page) return null;
@@ -118,16 +119,39 @@ export default function Header({ currentRoute, locale = 'zh' }: HeaderProps) {
               <Link
                 key={key}
                 href={targetUrl}
-                className={`relative px-3 py-1.5 text-xs whitespace-nowrap transition-all duration-150 select-none flex items-center shrink-0 ${
+                className={`text-center py-1.5 px-1 rounded-lg text-xs font-semibold transition-all duration-150 select-none truncate ${
                   isActive
-                    ? "text-yellow-400 font-bold"
-                    : "text-zinc-400 hover:text-zinc-200 font-medium"
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
+                    : "bg-zinc-900/60 border border-zinc-800/70 text-zinc-300 hover:text-white hover:bg-zinc-800"
                 }`}
               >
-                <span>{page.tabLabel}</span>
-                {isActive && (
-                  <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-yellow-500 rounded-full shadow-sm shadow-yellow-500/50"></span>
-                )}
+                {page.tabLabel}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* PC 端横向整洁排列 */}
+        <div className="hidden md:flex items-center justify-center gap-1.5 py-0.5">
+          {keywordKeys.map((key) => {
+            const page = seoData[key];
+            if (!page) return null;
+            const isActive = currentRoute === key;
+            const targetUrl = isHant
+              ? (key === "home" ? "/hant/" : `/hant/${key}/`)
+              : (key === "home" ? "/" : `/${key}/`);
+
+            return (
+              <Link
+                key={key}
+                href={targetUrl}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 select-none ${
+                  isActive
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/25 font-bold"
+                    : "text-zinc-400 hover:text-white hover:bg-zinc-900/80 font-medium"
+                }`}
+              >
+                {page.tabLabel}
               </Link>
             );
           })}

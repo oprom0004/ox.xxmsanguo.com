@@ -79,9 +79,9 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
   };
 
   return (
-    <section id="hero" className="relative min-h-[75vh] flex items-center justify-center py-12 md:py-18 overflow-hidden border-b border-zinc-850 bg-gradient-to-b from-[#080b11] via-[#0d121d] to-[#080b11]">
-      {/* 科技极光微弱光晕 */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[320px] bg-yellow-500/8 blur-[120px] rounded-full pointer-events-none"></div>
+    <section id="hero" className="relative min-h-[75vh] flex items-center justify-center py-12 md:py-18 overflow-hidden border-b border-zinc-850 bg-gradient-to-b from-[#060911] via-[#0b1120] to-[#060911]">
+      {/* 科技电光蓝光晕 */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
@@ -89,8 +89,8 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
           {/* 左侧主要文案 */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             
-            {/* 状态 Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/25 text-xs text-yellow-400 font-semibold mx-auto lg:mx-0 shadow-sm shadow-yellow-500/5">
+            {/* 科技蓝 Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-xs text-blue-400 font-semibold mx-auto lg:mx-0 shadow-sm shadow-blue-500/10">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>{pageData.heroBadge}</span>
               <span className="text-zinc-600">•</span>
@@ -111,7 +111,7 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
                 )}
               </h1>
               {getSubTitle(currentRoute) && (
-                <p className="text-base sm:text-xl font-bold bg-gradient-to-r from-yellow-400 via-amber-300 to-amber-500 bg-clip-text text-transparent tracking-wide font-sans leading-relaxed">
+                <p className="text-base sm:text-xl font-bold bg-gradient-to-r from-blue-400 via-sky-300 to-cyan-400 bg-clip-text text-transparent tracking-wide font-sans leading-relaxed">
                   {getSubTitle(currentRoute)}
                 </p>
               )}
@@ -126,7 +126,7 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <button 
                 data-cta="true"
-                className="w-full sm:w-fit flex items-center justify-center gap-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold text-sm px-8 py-3.5 rounded-xl shadow-lg shadow-yellow-500/20 transition-all duration-200 active:scale-95 cursor-pointer"
+                className="w-full sm:w-fit flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm px-8 py-3.5 rounded-xl shadow-xl shadow-blue-600/30 transition-all duration-200 active:scale-95 cursor-pointer"
               >
                 <span>{isHant ? "安全直達訪問通道" : "安全直达访问通道"}</span>
                 <ArrowRight size={16} />
@@ -139,9 +139,9 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
             </div>
           </div>
 
-          {/* 右侧：干净大气的 3 步排错与直达面板 */}
+          {/* 右侧：科技控制面板 */}
           <div className="lg:col-span-5 w-full">
-            <div className="bg-[#0b0e14]/90 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
+            <div className="bg-[#0b101c]/90 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
               
               <div className="pb-3 border-b border-zinc-800/80">
                 <h3 className="font-display font-bold text-base sm:text-lg text-white">{pageData.customIntroTitle}</h3>
@@ -151,8 +151,8 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
               {/* 步骤列表 */}
               <div className="space-y-3">
                 {(pageData.detailedSteps || []).map((step, idx) => (
-                  <div key={idx} className="flex gap-3.5 p-3.5 rounded-2xl bg-zinc-900/50 border border-zinc-800/70 hover:border-yellow-500/30 transition-colors">
-                    <div className="w-6 h-6 rounded-lg bg-yellow-500/10 border border-yellow-500/25 text-yellow-400 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  <div key={idx} className="flex gap-3.5 p-3.5 rounded-2xl bg-zinc-900/50 border border-zinc-800/70 hover:border-blue-500/30 transition-colors">
+                    <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/25 text-blue-400 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {step.step || idx + 1}
                     </div>
                     <div>
@@ -169,7 +169,7 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
               <div className="pt-1">
                 <button 
                   data-cta="true"
-                  className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 hover:border-yellow-500/40 text-xs text-yellow-400 font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm"
+                  className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-750 hover:border-blue-500/40 text-xs text-blue-400 font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm"
                 >
                   <span>{isHant ? "一鍵進入專屬通道" : "一键进入专属通道"}</span>
                   <ArrowRight size={13} />
