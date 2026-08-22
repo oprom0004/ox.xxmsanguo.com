@@ -28,31 +28,62 @@ export default function RelatedReadings({ currentRoute, locale = 'zh' }: Related
     item.route !== currentRoute && !CORE_PILLAR_KEYS.has(item.route)
   );
 
-  // 1. 语义关键词智能匹配（优先推荐同业务主题文章）
-  let matchedArticles = allArticles.filter(item => {
-    if (currentRoute.includes("chujin") || currentRoute.includes("c2c") || currentRoute.includes("dongka")) {
-      return item.route.includes("chujin") || item.route.includes("c2c") || item.route.includes("dongka") || item.route.includes("tibi");
-    }
-    if (currentRoute.includes("heyue") || currentRoute.includes("qiangping") || currentRoute.includes("wangge") || currentRoute.includes("matinggele")) {
-      return item.route.includes("heyue") || item.route.includes("qiangping") || item.route.includes("wangge") || item.route.includes("matinggele") || item.route.includes("feilv");
-    }
-    if (currentRoute.includes("pc") || currentRoute.includes("zhuomian") || currentRoute.includes("kanpan") || currentRoute.includes("api")) {
-      return item.route.includes("pc") || item.route.includes("zhuomian") || item.route.includes("api") || item.route.includes("dns");
-    }
-    if (currentRoute.includes("web3") || currentRoute.includes("zhujici") || currentRoute.includes("2fa") || currentRoute.includes("passkey") || currentRoute.includes("fangdiaoyu")) {
-      return item.route.includes("web3") || item.route.includes("zhujici") || item.route.includes("2fa") || item.route.includes("passkey") || item.route.includes("fangdiaoyu");
-    }
-    return false;
-  });
+  // 提取当前文章的语义特征
+  const isC2C = currentRoute.includes("chujin") || currentRoute.includes("c2c") || currentRoute.includes("dongka");
+  const isTrade = currentRoute.includes("heyue") || currentRoute.includes("qiangping") || currentRoute.includes("wangge") || currentRoute.includes("matinggele");
+  const isPC = currentRoute.includes("pc") || currentRoute.includes("zhuomian") || currentRoute.includes("kanpan") || currentRoute.includes("api");
+  const isSecurity = currentRoute.includes("web3") || currentRoute.includes("zhujici") || currentRoute.includes("2fa") || currentRoute.includes("passkey") || currentRoute.includes("fangdiaoyu");
 
-  // 2. 若同类不足 4 篇，从其他长尾文章中确定性补充
-  if (matchedArticles.length < 4) {
-    const remaining = allArticles.filter(item => !matchedArticles.some(m => m.route === item.route));
-    matchedArticles = [...matchedArticles, ...remaining];
+  // 严格按核心业务场景去重选择 4 篇完全不同维度的优质实操文章
+  const seenTopics = new Set<string>();
+  const selectedArticles: typeof allArticles = [];
+
+  // 获取文章的基础主题（去掉品牌前缀和后缀）
+  function getBaseTopic(route: string): string {
+    const parts = route.split("-");
+    if (parts.length >= 3) {
+      return parts.slice(1, parts.length - 2).join("-");
+    }
+    return route;
   }
 
-  // 选取前 4 篇
-  const selectedArticles = matchedArticles.slice(0, 4);
+  const currentBaseTopic = getBaseTopic(currentRoute);
+  seenTopics.add(currentBaseTopic);
+
+  // 优先选取强相关但不同主题的文章
+  for (const item of allArticles) {
+    const baseTopic = getBaseTopic(item.route);
+    if (!seenTopics.has(baseTopic)) {
+      let isRelevant = false;
+      if (isC2C && (item.route.includes("chujin") || item.route.includes("tibi") || item.route.includes("xrp") || item.route.includes("feilv"))) {
+        isRelevant = true;
+      } else if (isTrade && (item.route.includes("heyue") || item.route.includes("wangge") || item.route.includes("matinggele") || item.route.includes("feilv"))) {
+        isRelevant = true;
+      } else if (isPC && (item.route.includes("pc") || item.route.includes("api") || item.route.includes("dns") || item.route.includes("wangge"))) {
+        isRelevant = true;
+      } else if (isSecurity && (item.route.includes("web3") || item.route.includes("2fa") || item.route.includes("passkey") || item.route.includes("fangdiaoyu") || item.route.includes("laoyonghu"))) {
+        isRelevant = true;
+      }
+
+      if (isRelevant) {
+        seenTopics.add(baseTopic);
+        selectedArticles.push(item);
+        if (selectedArticles.length >= 4) break;
+      }
+    }
+  }
+
+  // 若不足 4 篇，用未出现过的其他核心主题补齐
+  if (selectedArticles.length < 4) {
+    for (const item of allArticles) {
+      const baseTopic = getBaseTopic(item.route);
+      if (!seenTopics.has(baseTopic)) {
+        seenTopics.add(baseTopic);
+        selectedArticles.push(item);
+        if (selectedArticles.length >= 4) break;
+      }
+    }
+  }
 
   if (selectedArticles.length === 0) {
     return null;
