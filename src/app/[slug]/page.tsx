@@ -55,7 +55,7 @@ export default function SubPage({ params }: PageProps) {
   const currentRoute = params.slug;
   const pageData = SEO_KEYWORDS_MAP[currentRoute];
 
-  if (!pageData || (pageData.publishDate && pageData.publishDate > currentDate)) {
+  if (!pageData) {
     notFound();
   }
 

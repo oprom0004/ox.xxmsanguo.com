@@ -55,7 +55,7 @@ export default function SubPageHant({ params }: PageProps) {
   const currentRoute = params.slug;
   const pageData = SEO_KEYWORDS_MAP_HANT[currentRoute];
 
-  if (!pageData || (pageData.publishDate && pageData.publishDate > currentDate)) {
+  if (!pageData) {
     notFound();
   }
 

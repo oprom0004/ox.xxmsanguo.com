@@ -23,20 +23,36 @@ export default function RelatedReadings({ currentRoute, locale = 'zh' }: Related
     "anzhuo", "pingguo", "anzhuangbao", "xinshou-jiaocheng", "zhongwen", "xiazai"
   ]);
 
-  // 获取所有排除当前路由的长尾实操文章
+  // 获取所有长尾实操文章（排除当前文章与基础功能柱子页）
   const allArticles = Object.values(seoData).filter(item => 
     item.route !== currentRoute && !CORE_PILLAR_KEYS.has(item.route)
   );
 
-  // 确定性选取 4 篇相关推荐文章
-  let selectedArticles: typeof allArticles = [];
-  if (allArticles.length >= 4) {
-    const hash = currentRoute.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const start = hash % (allArticles.length - 3);
-    selectedArticles = allArticles.slice(start, start + 4);
-  } else {
-    selectedArticles = allArticles;
+  // 1. 语义关键词智能匹配（优先推荐同业务主题文章）
+  let matchedArticles = allArticles.filter(item => {
+    if (currentRoute.includes("chujin") || currentRoute.includes("c2c") || currentRoute.includes("dongka")) {
+      return item.route.includes("chujin") || item.route.includes("c2c") || item.route.includes("dongka") || item.route.includes("tibi");
+    }
+    if (currentRoute.includes("heyue") || currentRoute.includes("qiangping") || currentRoute.includes("wangge") || currentRoute.includes("matinggele")) {
+      return item.route.includes("heyue") || item.route.includes("qiangping") || item.route.includes("wangge") || item.route.includes("matinggele") || item.route.includes("feilv");
+    }
+    if (currentRoute.includes("pc") || currentRoute.includes("zhuomian") || currentRoute.includes("kanpan") || currentRoute.includes("api")) {
+      return item.route.includes("pc") || item.route.includes("zhuomian") || item.route.includes("api") || item.route.includes("dns");
+    }
+    if (currentRoute.includes("web3") || currentRoute.includes("zhujici") || currentRoute.includes("2fa") || currentRoute.includes("passkey") || currentRoute.includes("fangdiaoyu")) {
+      return item.route.includes("web3") || item.route.includes("zhujici") || item.route.includes("2fa") || item.route.includes("passkey") || item.route.includes("fangdiaoyu");
+    }
+    return false;
+  });
+
+  // 2. 若同类不足 4 篇，从其他长尾文章中确定性补充
+  if (matchedArticles.length < 4) {
+    const remaining = allArticles.filter(item => !matchedArticles.some(m => m.route === item.route));
+    matchedArticles = [...matchedArticles, ...remaining];
   }
+
+  // 选取前 4 篇
+  const selectedArticles = matchedArticles.slice(0, 4);
 
   if (selectedArticles.length === 0) {
     return null;
@@ -51,14 +67,14 @@ export default function RelatedReadings({ currentRoute, locale = 'zh' }: Related
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-yellow-500" />
             <h3 className="text-zinc-200 font-bold text-sm md:text-base tracking-wide">
-              {isHant ? "推薦專題實操閱讀" : "推荐专题实操阅读"}
+              {isHant ? "推薦相關深度實操" : "推荐相关深度实操"}
             </h3>
           </div>
           <Link
             href={`${prefix}/xinshou-jiaocheng/`}
             className="text-xs text-yellow-500 hover:text-yellow-400 font-semibold flex items-center gap-1 hover:underline"
           >
-            <span>{isHant ? "查看更多指南" : "查看更多指南"}</span>
+            <span>{isHant ? "查看全部教程" : "查看全部教程"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
