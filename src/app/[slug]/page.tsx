@@ -29,7 +29,6 @@ function getCurrentDateString() {
 
 export function generateStaticParams() {
   return Object.keys(SEO_KEYWORDS_MAP)
-    .filter((key) => key !== "home")
     .map((slug) => ({
       slug,
     }));

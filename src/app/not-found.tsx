@@ -1,17 +1,22 @@
+"use client";
+
+import { useEffect } from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Home, Download, UserPlus, LogIn, Compass, ShieldAlert } from 'lucide-react';
 
-export const metadata: Metadata = {
-    title: '404 - 页面未找到 / 頁面未找到',
-    description: '您访问的网页或节点不存在，请通过下方平台安全导航通道返回主站。',
-    robots: {
-        index: false,
-        follow: true, // 允许搜索引擎蜘蛛追踪页面上的内链，对全站爬取和权重流转极其有利
-    },
-};
-
 export default function NotFound() {
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const path = window.location.pathname.replace(/\/$/, "");
+            if (path === "/home") {
+                window.location.replace("/");
+            } else if (path === "/hant/home") {
+                window.location.replace("/hant/");
+            }
+        }
+    }, []);
+
     return (
         <div className="relative grid min-h-screen place-items-center bg-[#0b0e11] px-6 py-24 sm:py-32 lg:px-8 overflow-hidden">
             {/* Ambient Background Glows */}
