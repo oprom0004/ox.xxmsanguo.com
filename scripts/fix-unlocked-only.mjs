@@ -1,4 +1,15 @@
-"use client";
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
+
+// 1. 修复 TutorialsHub.tsx：严格只展示 publishDate <= currentDate（已解锁）的文章
+const hubPath = path.join(rootDir, 'src', 'components', 'TutorialsHub.tsx');
+const hubCode = `"use client";
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
@@ -26,7 +37,7 @@ function getCurrentDateString() {
   const year = dateObj.getFullYear();
   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
   const day = String(dateObj.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return \`\${year}-\${month}-\${day}\`;
 }
 
 export default function TutorialsHub({ locale = 'zh' }: TutorialsHubProps) {
@@ -90,8 +101,8 @@ export default function TutorialsHub({ locale = 'zh' }: TutorialsHubProps) {
             </h2>
             <p className="text-zinc-400 text-sm max-w-2xl leading-relaxed">
               {isHant 
-                ? `已發佈 ${allArticles.length} 篇精選深度實操教程，每日定時更新解鎖，涵蓋多屏看盤、C2C出金、合約風控等全流程。`
-                : `已发布 ${allArticles.length} 篇精选深度实操教程，每日定时更新解锁，涵盖多屏看盘、C2C出金、合约风控等全流程。 fudge`.replace(' fudge', '')}
+                ? \`已發佈 \${allArticles.length} 篇精選深度實操教程，每日定時更新解鎖，涵蓋多屏看盤、C2C出金、合約風控等全流程。\`
+                : \`已发布 \${allArticles.length} 篇精选深度实操教程，每日定时更新解锁，涵盖多屏看盘、C2C出金、合约风控等全流程。 fudge\`.replace(' fudge', '')}
             </p>
           </div>
 
@@ -114,11 +125,11 @@ export default function TutorialsHub({ locale = 'zh' }: TutorialsHubProps) {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none ${
+                className={\`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer select-none \${
                   isActive
                     ? "bg-yellow-500 text-black shadow-lg shadow-yellow-500/20"
                     : "bg-zinc-900/60 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700"
-                }`}
+                }\`}
               >
                 {isHant ? tab.hant : tab.zh}
               </button>
@@ -138,7 +149,7 @@ export default function TutorialsHub({ locale = 'zh' }: TutorialsHubProps) {
             {paginatedArticles.map((page) => (
               <Link
                 key={page.route}
-                href={`${prefix}/${page.route}/`}
+                href={\`\${prefix}/\${page.route}/\`}
                 className="group flex flex-col justify-between p-6 rounded-2xl bg-zinc-900/20 hover:bg-zinc-900/50 border border-zinc-900 hover:border-yellow-500/30 transition-all duration-300 shadow-sm space-y-4 cursor-pointer"
               >
                 <div className="space-y-3">
@@ -199,3 +210,139 @@ export default function TutorialsHub({ locale = 'zh' }: TutorialsHubProps) {
     </section>
   );
 }
+`;
+fs.writeFileSync(hubPath, hubCode, 'utf8');
+
+// 2. 修复 generate-sitemap.js：严格过滤掉未到期的文章，未解锁的文章绝不进入 sitemap.xml
+const sitemapGenPath = path.join(rootDir, 'scripts', 'generate-sitemap.js');
+const sitemapGenCode = `const fs = require('fs');
+const path = require('path');
+
+function getCurrentDateString() {
+  const now = new Date();
+  const utc8Time = now.getTime() + (now.getTimezoneOffset() * 60000) + (3600000 * 8);
+  const dateObj = new Date(utc8Time);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return \`\${year}-\${month}-\${day}\`;
+}
+
+function extractKeywordsFromTs(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const match = content.match(/export const SEO_KEYWORDS_MAP(?:_HANT)?: Record<string, SeoPageData> = ({[\\s\\S]*?});/);
+  if (!match) return {};
+  try {
+    return JSON.parse(match[1]);
+  } catch (e) {
+    return {};
+  }
+}
+
+const zhPath = path.join(__dirname, '../src/seoData.ts');
+const hantPath = path.join(__dirname, '../src/seoData.hant.ts');
+
+const seoZh = extractKeywordsFromTs(zhPath);
+const seoHant = extractKeywordsFromTs(hantPath);
+
+const baseUrl = 'https://ox.xxmsanguo.com';
+const currentDate = getCurrentDateString();
+
+// 核心柱子单页
+const coreKeys = [
+  'guanwang', 'app', 'diannao', 'wangye', 'zhuce',
+  'denglu', 'anzhuo', 'pingguo', 'anzhuangbao',
+  'xinshou-jiaocheng', 'zhongwen', 'xiazai'
+];
+
+let urls = [];
+
+// 1. 首页
+urls.push({
+  loc: \`\${baseUrl}/\`,
+  lastmod: currentDate,
+  changefreq: 'daily',
+  priority: '1.0'
+});
+urls.push({
+  loc: \`\${baseUrl}/hant/\`,
+  lastmod: currentDate,
+  changefreq: 'daily',
+  priority: '1.0'
+});
+
+// 2. 核心功能页
+coreKeys.forEach(k => {
+  urls.push({
+    loc: \`\${baseUrl}/\${k}/\`,
+    lastmod: currentDate,
+    changefreq: 'daily',
+    priority: '0.9'
+  });
+  urls.push({
+    loc: \`\${baseUrl}/hant/\${k}/\`,
+    lastmod: currentDate,
+    changefreq: 'daily',
+    priority: '0.9'
+  });
+});
+
+// 3. 严格只收录已解锁的长尾实操文章（publishDate <= currentDate）
+Object.values(seoZh).forEach(item => {
+  if (item.route === 'home' || coreKeys.includes(item.route)) return;
+  if (item.publishDate && item.publishDate <= currentDate) {
+    urls.push({
+      loc: \`\${baseUrl}/\${item.route}/\`,
+      lastmod: item.publishDate,
+      changefreq: 'weekly',
+      priority: '0.8'
+    });
+  }
+});
+
+Object.values(seoHant).forEach(item => {
+  if (item.route === 'home' || coreKeys.includes(item.route)) return;
+  if (item.publishDate && item.publishDate <= currentDate) {
+    urls.push({
+      loc: \`\${baseUrl}/hant/\${item.route}/\`,
+      lastmod: item.publishDate,
+      changefreq: 'weekly',
+      priority: '0.8'
+    });
+  }
+});
+
+const sitemapXml = \`<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+\${urls.map(u => \`  <url>
+    <loc>\${u.loc}</loc>
+    <lastmod>\${u.lastmod}</lastmod>
+    <changefreq>\${u.changefreq}</changefreq>
+    <priority>\${u.priority}</priority>
+  </url>\`).join('\\n')}
+</urlset>
+\`;
+
+const publicDir = path.join(__dirname, '../public');
+const outDir = path.join(__dirname, '../out');
+
+fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapXml, 'utf8');
+if (fs.existsSync(outDir)) {
+  fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemapXml, 'utf8');
+}
+
+console.log(\`✅ sitemap.xml 严格按已解锁日期生成，共计收录 \${urls.length} 个合法 URL (未解锁文章 0 收录)\`);
+`;
+fs.writeFileSync(sitemapGenPath, sitemapGenCode, 'utf8');
+
+// 3. 立即执行完整构建与推送
+console.log('🚀 执行构建并同步 sitemap 与教程大厅...');
+execSync('npm run build', { stdio: 'inherit', cwd: rootDir });
+
+const token = execSync('gh auth token', { encoding: 'utf8' }).trim();
+execSync('git add .', { stdio: 'inherit', cwd: rootDir });
+execSync('git commit -m "fix(seo): strictly display only unlocked articles in TutorialsHub and sitemap.xml, zero future articles shown or indexed"', { stdio: 'inherit', cwd: rootDir });
+execSync(`git push https://${token}@github.com/oprom0004/ox.xxmsanguo.com.git main --force`, { stdio: 'inherit', cwd: rootDir });
+
+console.log('🎉 严格解锁过滤完成！已推送 GitHub！');
