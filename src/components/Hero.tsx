@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useConfig } from "../context/ConfigContext";
 import { SEO_KEYWORDS_MAP } from "../seoData";
 import { SEO_KEYWORDS_MAP_HANT } from "../seoData.hant";
-import { Check, Copy, ArrowRight, ShieldCheck, Zap, AlertTriangle } from "lucide-react";
+import { ArrowRight, ShieldCheck, Zap, Lock, Sparkles, Activity, CheckCircle2 } from "lucide-react";
 
 interface HeroProps {
   currentRoute: string;
@@ -14,7 +14,6 @@ interface HeroProps {
 
 export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
   const { config } = useConfig();
-  const [copied, setCopied] = useState(false);
   const isHant = locale === 'hant';
   const seoData = isHant ? SEO_KEYWORDS_MAP_HANT : SEO_KEYWORDS_MAP;
 
@@ -24,29 +23,29 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
     if (isHant) {
       switch (route) {
         case "home":
-          return "歐意 OKX / 易歐 / 毆易 最新備用網址与 App 下載導航";
+          return "歐意 OKX / 易歐 / 毆易 最新備用網址與 App 下載導航";
         case "zhuce":
-          return "歐意帳號註冊与 20% 手續費減免";
+          return "歐意帳號註冊與 20% 手續費減免特權";
         case "denglu":
-          return "歐意網頁版安全登錄與備用網址";
+          return "歐意網頁版安全登錄與高可用備用節點";
         case "app":
-          return "歐意 App (iOS / Android) 下載";
+          return "歐意 App (iOS / Android) 正版原裝下載";
         case "diannao":
-          return "歐意電腦客戶端 (Windows / Mac) 下載";
+          return "歐意電腦客戶端 (Windows / Mac) 專業多屏版下載";
         case "anzhuangbao":
-          return "歐意安卓 APK 安裝包與蘋果 iOS 下載指引";
+          return "歐意安卓 APK 安裝包與蘋果 iOS 安裝指南";
         case "pingguo":
-          return "蘋果 iOS 版 App Store 安裝與 Apple ID 切換";
+          return "蘋果 iOS 版 App Store 安裝與 Apple ID 獲取";
         case "wangye":
-          return "歐意網頁線上版直接訪問入口";
+          return "歐意網頁線上版免安裝極速交易入口";
         case "anzhuo":
-          return "歐意安卓 APK 原裝下載";
+          return "歐意安卓 APK 正版原裝直連下載";
         case "guanwang":
-          return "歐意最新安全備用網址入口";
+          return "歐意最新高可用安全備用網址通道";
         case "zhongwen":
-          return "歐意中文介面與人民幣 (CNY) 顯示設置";
+          return "歐意中文介面與人民幣 (CNY) 顯示配置";
         case "xiazai":
-          return "歐意 App 與電腦端下載大廳";
+          return "歐意 App 與電腦桌面端下載大廳";
         default:
           return "";
       }
@@ -55,65 +54,58 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
       case "home":
         return "欧意 OKX / 易欧 / 殴易 最新备用网址与 App 下载导航";
       case "zhuce":
-        return "欧意账号注册与 20% 手续费减免";
+        return "欧意账号注册与 20% 手续费减免特权";
       case "denglu":
-        return "欧意网页版安全登录与备用网址";
+        return "欧意网页版安全登录与高可用备用节点";
       case "app":
-        return "欧意 App (iOS / Android) 下载";
+        return "欧意 App (iOS / Android) 正版原装下载";
       case "diannao":
-        return "欧意电脑客户端 (Windows / Mac) 下载";
+        return "欧意电脑客户端 (Windows / Mac) 专业多屏版下载";
       case "anzhuangbao":
-        return "欧意安卓 APK 安装包与苹果 iOS 下载指引";
+        return "欧意安卓 APK 安装包与苹果 iOS 安装指南";
       case "pingguo":
-        return "苹果 iOS 版 App Store 安装与 Apple ID 切换";
+        return "苹果 iOS 版 App Store 安装与 Apple ID 获取";
       case "wangye":
-        return "欧意网页在线版直接访问入口";
+        return "欧意网页在线版免安装极速交易入口";
       case "anzhuo":
-        return "欧意安卓 APK 原装下载";
+        return "欧意安卓 APK 正版原装直连下载";
       case "guanwang":
-        return "欧意最新安全备用网址入口";
+        return "欧意最新高可用安全备用网址通道";
       case "zhongwen":
-        return "欧意中文界面与人民币 (CNY) 显示设置";
+        return "欧意中文界面与人民币 (CNY) 显示配置";
       case "xiazai":
-        return "欧意 App 与电脑端下载大厅";
+        return "欧意 App 与电脑桌面端下载大厅";
       default:
         return "";
     }
   };
 
-  const copyCode = async () => {
-    try {
-      await navigator.clipboard.writeText(config.invitationCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2005);
-    } catch (e) {
-      alert(isHant ? `邀請碼已成功複製：${config.invitationCode}` : `邀请码已成功复制：${config.invitationCode}`);
-    }
-  };
-
   return (
-    <section id="hero" className="relative min-h-[82vh] flex items-center justify-center py-12 md:py-20 overflow-hidden border-b border-zinc-900 bg-gradient-to-b from-zinc-950 to-zinc-900">
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-yellow-500/5 blur-3xl rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-[300px] h-[300px] bg-amber-500/5 blur-3xl rounded-full pointer-events-none"></div>
+    <section id="hero" className="relative min-h-[75vh] flex items-center justify-center py-12 md:py-20 overflow-hidden border-b border-zinc-900 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950">
+      {/* 现代微光光晕 */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-yellow-500/8 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-10 left-10 w-[300px] h-[300px] bg-amber-500/5 blur-[100px] rounded-full pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Slogan and Text (Left 7 Columns) */}
+          {/* 左侧主要文案 */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             
-            {/* Tagline */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/80 border border-zinc-800 text-xs text-yellow-500 font-semibold mx-auto lg:mx-0">
-              <ShieldCheck size={12} />
+            {/* 状态徽章 */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs text-yellow-400 font-semibold mx-auto lg:mx-0 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>{pageData.heroBadge}</span>
+              <span className="text-zinc-600">|</span>
+              <span className="text-zinc-400 text-[11px] font-mono">256-bit SSL</span>
             </div>
 
-            {/* Display Headings */}
+            {/* 核心大标题 */}
             <div className="space-y-3.5">
-              <h1 className="font-display font-extrabold text-3xl sm:text-4.5xl md:text-5.5xl text-white tracking-tight leading-tight flex flex-col items-center lg:items-start text-center lg:text-left">
+              <h1 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-[1.15] flex flex-col items-center lg:items-start text-center lg:text-left">
                 {pageData.heroTitle.includes("|") ? (
                   pageData.heroTitle.split("|").map((part, idx) => (
-                    <span key={idx} className={idx > 0 ? "mt-1 sm:mt-1.5 text-zinc-100" : ""}>
+                    <span key={idx} className={idx > 0 ? "mt-1 sm:mt-1.5 text-zinc-200" : ""}>
                       {part.trim()}
                     </span>
                   ))
@@ -122,52 +114,65 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
                 )}
               </h1>
               {getSubTitle(currentRoute) && (
-                <p className="text-lg sm:text-xl font-bold bg-gradient-to-r from-yellow-400 via-amber-400 to-amber-500 bg-clip-text text-transparent tracking-wide font-sans leading-relaxed">
+                <p className="text-base sm:text-xl font-bold bg-gradient-to-r from-yellow-400 via-amber-300 to-amber-500 bg-clip-text text-transparent tracking-wide font-sans leading-relaxed">
                   {getSubTitle(currentRoute)}
                 </p>
               )}
             </div>
 
-            {/* Paragraph / Description */}
-            <p className="text-zinc-400 text-sm sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-sans font-normal">
+            {/* 核心说明 */}
+            <p className="text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto lg:mx-0 leading-relaxed font-sans font-normal">
               {pageData.heroSub}
             </p>
 
-            {/* Call to Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+            {/* 行动按钮与保障 */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <button 
                 data-cta="true"
-                className="w-fit flex items-center justify-center gap-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-sm px-8 py-3.5 rounded-xl shadow-lg shadow-yellow-500/10 transition active:scale-95 cursor-pointer"
+                className="w-full sm:w-fit flex items-center justify-center gap-2.5 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-bold text-sm px-8 py-3.5 rounded-2xl shadow-xl shadow-yellow-500/15 transition active:scale-95 cursor-pointer"
               >
-                <span>{isHant ? "查看訪問入口" : "查看访问入口"}</span>
+                <span>{isHant ? "安全直達訪問通道" : "安全直达访问通道"}</span>
                 <ArrowRight size={16} />
               </button>
+
+              <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>{isHant ? "多節點加密線路" : "多节点加密线路"}</span>
+              </div>
             </div>
           </div>
 
-          {/* Quick Registration & Security Guidance (Right 5 Columns) */}
+          {/* 右侧交互卡片 */}
           <div className="lg:col-span-5 w-full">
-            <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 shadow-2xl space-y-5 relative">
+            <div className="bg-zinc-950/80 backdrop-blur-xl border border-zinc-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 relative overflow-hidden">
               
-              {/* Card Ribbon */}
-              <div className="absolute top-0 right-6 -translate-y-1/2 bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-mono text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                SAFE & REAL-TIME
+              {/* 卡片顶部装饰 */}
+              <div className="flex items-center justify-between pb-4 border-b border-zinc-850">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                  <span className="text-xs text-zinc-400 font-mono ml-1 font-bold">Fast Gateway</span>
+                </div>
+                <div className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  REAL-TIME 2026
+                </div>
               </div>
 
               <div>
-                <h3 className="font-display font-bold text-lg text-white">{pageData.customIntroTitle}</h3>
-                <p className="text-zinc-500 text-xs">{pageData.customIntroBody}</p>
+                <h3 className="font-display font-bold text-base sm:text-lg text-white">{pageData.customIntroTitle}</h3>
+                <p className="text-zinc-400 text-xs mt-1">{pageData.customIntroBody}</p>
               </div>
 
-              {/* Steps Layout */}
-              <div className="space-y-4">
-                {pageData.detailedSteps.map((step) => (
-                  <div key={step.step} className="flex gap-4">
-                    <div className="w-6 h-6 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-500 font-mono text-xs font-bold shrink-0">
-                      {step.step}
+              {/* 步骤条 */}
+              <div className="space-y-3.5">
+                {(pageData.detailedSteps || []).map((step, idx) => (
+                  <div key={idx} className="flex gap-3.5 p-3 rounded-xl bg-zinc-900/40 border border-zinc-800/60">
+                    <div className="w-6 h-6 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 font-mono text-xs font-bold shrink-0 mt-0.5">
+                      {step.step || idx + 1}
                     </div>
                     <div>
-                      <h4 className="text-zinc-200 text-xs font-semibold">{step.title}</h4>
+                      <h4 className="text-zinc-100 text-xs font-bold">{step.title}</h4>
                       <p className="text-zinc-400 text-[11px] mt-0.5 leading-relaxed">
                         {step.desc}
                       </p>
@@ -176,14 +181,14 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
                 ))}
               </div>
 
-              {/* Direct Link button */}
-              <div className="pt-3 border-t border-zinc-900 text-center">
+              {/* 直达通道底部按钮 */}
+              <div className="pt-2">
                 <button 
                   data-cta="true"
-                  className="inline-flex items-center gap-1.5 text-xs text-yellow-500 hover:text-yellow-400 font-medium group cursor-pointer"
+                  className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-750 text-xs text-yellow-400 font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
                 >
-                  <span>{isHant ? "查看訪問入口" : "查看访问入口"}</span>
-                  <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+                  <span>{isHant ? "一鍵進入專屬通道" : "一键进入专属通道"}</span>
+                  <ArrowRight size={13} />
                 </button>
               </div>
 

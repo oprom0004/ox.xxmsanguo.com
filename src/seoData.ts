@@ -8,7 +8,7 @@ export const SEO_KEYWORDS_MAP: Record<string, SeoPageData> = {
     "description": "欧意OKX多端直连服务中心。提供 Windows/Mac 桌面客户端及 Android/iOS 手机端正版原装下载，解决国内网络连接超时、DNS污染与登录报错，保障数字资产交易全天候畅通。",
     "keywords": "欧意OKX, 欧易电脑版, ox.xxmsanguo.com, 欧意最新备用网址, 欧易下载, 欧意直连通道",
     "heroBadge": "正版多端直连与排错加速通道",
-    "heroTitle": "欧意 OKX 多端直连通道及客户端客户端下载",
+    "heroTitle": "欧意 OKX 多端直连通道及客户端原装下载",
     "heroSub": "遇到主站网络超时、DNS污染或下载拦截？本站实时提供多节点直连加速、桌面专业版与手机端原装安全下载。",
     "customIntroTitle": "全天候安全直连 3 步指南",
     "customIntroBody": "简单三步，避开网络解析干扰，直达安全交易大厅。",
@@ -440,7 +440,7 @@ export const SEO_KEYWORDS_MAP: Record<string, SeoPageData> = {
   "xiazai": {
     "route": "xiazai",
     "tabLabel": "下载大厅",
-    "title": "欧意OKX全平台客户端客户端下载总站：Windows/Mac/Android/iOS一键直达",
+    "title": "欧意OKX全平台客户端原装下载总站：Windows/Mac/Android/iOS一键直达",
     "description": "多端合一的正版极速分发入口。智能识别访客操作系统，自动匹配最适合的 64 位桌面客户端或移动安装包，支持断点续传与极速直连。",
     "keywords": "欧意下载, OKX全平台下载, 电脑版安装包, 手机APP下载, 安全直连下载站",
     "heroBadge": "全平台客户端一站式直连下载",
