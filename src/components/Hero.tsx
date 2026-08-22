@@ -79,7 +79,7 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
   };
 
   return (
-    <section id="hero" className="relative min-h-[75vh] flex items-center justify-center py-12 md:py-18 overflow-hidden border-b border-zinc-850 bg-gradient-to-b from-[#060911] via-[#0b1120] to-[#060911]">
+    <section id="hero" className="relative min-h-[75vh] flex items-center justify-center py-12 md:py-18 overflow-hidden bg-gradient-to-b from-[#060911] via-[#0b1120] to-[#060911]">
       {/* 科技电光蓝光晕 */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-blue-600/10 blur-[130px] rounded-full pointer-events-none"></div>
 

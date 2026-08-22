@@ -36,7 +36,7 @@ export default function Header({ currentRoute, locale = 'zh' }: HeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#080b11]/95 backdrop-blur-md border-b border-zinc-800 shadow-2xl">
+    <header className="sticky top-0 z-40 bg-[#080b11]/95 backdrop-blur-md shadow-2xl">
       {/* 顶部主 Branding 栏 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         
@@ -104,7 +104,7 @@ export default function Header({ currentRoute, locale = 'zh' }: HeaderProps) {
       </div>
 
       {/* 手机端平铺网格 + PC 端平滑导航栏 (100% 全部展现，杜绝截断) */}
-      <div className="bg-[#05070a] border-t border-zinc-850 p-2 sm:px-4">
+      <div className="bg-[#05070a] p-2 sm:px-4">
         {/* 移动端平铺网格 (4列网格一目了然) */}
         <div className="grid grid-cols-4 gap-1.5 md:hidden">
           {keywordKeys.map((key) => {
