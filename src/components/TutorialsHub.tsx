@@ -90,7 +90,7 @@ export default function TutorialsHub({ locale = 'zh' }: TutorialsHubProps) {
           <div className="space-y-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/25 text-xs text-blue-400 font-bold font-mono">
               <BookOpen className="w-3.5 h-3.5" />
-              <span>{isHant ? "官方實操與排錯知識庫" : "官方实操与排错知识库"}</span>
+              <span>{isHant ? "正版實操與排錯知識庫" : "标准实操与排错知识库"}</span>
             </div>
             <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
               {isHant ? "歐意 OKX 全功能深度實操指南" : "欧意 OKX 全功能深度实操指南"}

@@ -127,7 +127,7 @@ export default function ArticleBody({ currentRoute = "guanwang", locale = 'zh' }
     }
     return [
       { wrong: "开启 2FA 谷歌验证器时未手抄备份 16 位秘钥", correct: "离线物理备份 16 位初始秘钥，手机丢失时可秒级直接还原" },
-      { wrong: "轻信陌生短信通知关于‘账户清退/提币至安全账户’", correct: "核对账户安全中心设置的防钓鱼码，非同名官方短信直接拉黑" },
+      { wrong: "轻信陌生短信通知关于‘账户清退/提币至安全账户’", correct: "核对账户安全中心设置的防钓鱼码，非同名正版短信直接拉黑" },
       { wrong: "在公共不安全 Wi-Fi 下直接明文输入密码与验证码", correct: "绑定 Passkey FIDO2 生物硬件认证，彻底免疫任何钓鱼劫持" }
     ];
   }, [currentRoute]);
