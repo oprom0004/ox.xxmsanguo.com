@@ -1,0 +1,61 @@
+name: 📅 每日发文与 SEO 索引邮件通知
+
+on:
+  schedule:
+    # 每天北京时间 00:00 (UTC 16:00) 自动执行
+    - cron: '0 16 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  daily-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update Sitemap and Daily Content
+        run: |
+          node scripts/generate-sitemap.js
+          node scripts/notify-digest.js
+
+      - name: Commit and Push Sitemap Changes if Any
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/sitemap.xml
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(seo): auto-update sitemap for daily unlocked articles [skip ci]" && git push)
+
+      - name: Read Daily Report Content
+        id: read_report
+        run: |
+          REPORT_BODY=$(cat daily_report.md)
+          echo "REPORT_BODY<<EOF" >> $GITHUB_ENV
+          echo "$REPORT_BODY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Send Daily Digest to Git Account Email via GitHub Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const title = `📅 [SEO 发文日报] ${dateStr} 今日文章已解锁上线 & Sitemap 索引已更新`;
+            const body = process.env.REPORT_BODY;
+            
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['daily-seo-report']
+            });
+            console.log(`✅ 发文通知邮件已通过 Issue #${issue.data.number} 成功推送到您的 Git 邮箱！`);
