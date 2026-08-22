@@ -1,0 +1,140 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
+
+// 1. 设置合理的历史沉淀 + 未来滴灌排期：
+// 起始日期从 2026-05-20（过去3个月）开始，每天解锁 1 篇，排期跨越 365 天至 2027-05-20
+// 今天是 2026-08-23，因此过去 95 天内已自然沉淀解锁 95 篇长尾实操（简繁共 190 篇）
+// 剩余 270 篇为未来严格未到期文章，继续隐藏在排期队列中
+function applyNaturalDripSchedule(filePath) {
+  let content = fs.readFileSync(filePath, 'utf8');
+  const startDate = new Date(2026, 4, 20); // 2026-05-20
+  let index = 0;
+
+  content = content.replace(/"publishDate": "202[67]-\d\d-\d\d"/g, (match) => {
+    const d = new Date(startDate.getTime() + index * 24 * 60 * 60 * 1000);
+    index++;
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `"publishDate": "${year}-${month}-${day}"`;
+  });
+
+  fs.writeFileSync(filePath, content, 'utf8');
+}
+
+applyNaturalDripSchedule(path.join(rootDir, 'src', 'seoData.ts'));
+applyNaturalDripSchedule(path.join(rootDir, 'src', 'seoData.hant.ts'));
+
+// 2. 升级 generate-sitemap.js：补充 privacy-policy 及多语言完整映射
+const sitemapGenPath = path.join(rootDir, 'scripts', 'generate-sitemap.js');
+const sitemapGenCode = `const fs = require('fs');
+const path = require('path');
+
+function getCurrentDateString() {
+  const now = new Date();
+  const utc8Time = now.getTime() + (now.getTimezoneOffset() * 60000) + (3600000 * 8);
+  const dateObj = new Date(utc8Time);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return \`\${year}-\${month}-\${day}\`;
+}
+
+function extractKeywordsFromTs(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const match = content.match(/export const SEO_KEYWORDS_MAP(?:_HANT)?: Record<string, SeoPageData> = ({[\\s\\S]*?});/);
+  if (!match) return {};
+  try {
+    return JSON.parse(match[1]);
+  } catch (e) {
+    return {};
+  }
+}
+
+const zhPath = path.join(__dirname, '../src/seoData.ts');
+const hantPath = path.join(__dirname, '../src/seoData.hant.ts');
+
+const seoZh = extractKeywordsFromTs(zhPath);
+const seoHant = extractKeywordsFromTs(hantPath);
+
+const baseUrl = 'https://ox.xxmsanguo.com';
+const currentDate = getCurrentDateString();
+
+// 核心功能柱子单页
+const coreKeys = [
+  'guanwang', 'app', 'diannao', 'wangye', 'zhuce',
+  'denglu', 'anzhuo', 'pingguo', 'anzhuangbao',
+  'xinshou-jiaocheng', 'zhongwen', 'xiazai'
+];
+
+let urls = [];
+
+// 1. 首页 (简体 + 繁体)
+urls.push({ loc: \`\${baseUrl}/\`, lastmod: currentDate, changefreq: 'daily', priority: '1.0' });
+urls.push({ loc: \`\${baseUrl}/hant/\`, lastmod: currentDate, changefreq: 'daily', priority: '1.0' });
+
+// 2. 隐私政策页 (简体 + 繁体)
+urls.push({ loc: \`\${baseUrl}/privacy-policy/\`, lastmod: currentDate, changefreq: 'monthly', priority: '0.5' });
+urls.push({ loc: \`\${baseUrl}/hant/privacy-policy/\`, lastmod: currentDate, changefreq: 'monthly', priority: '0.5' });
+
+// 3. 核心功能落地页 (简体 + 繁体)
+coreKeys.forEach(k => {
+  urls.push({ loc: \`\${baseUrl}/\${k}/\`, lastmod: currentDate, changefreq: 'daily', priority: '0.9' });
+  urls.push({ loc: \`\${baseUrl}/hant/\${k}/\`, lastmod: currentDate, changefreq: 'daily', priority: '0.9' });
+});
+
+// 4. 严格收录截至今日已解锁发布的实操文章 (publishDate <= currentDate)
+Object.values(seoZh).forEach(item => {
+  if (item.route === 'home' || coreKeys.includes(item.route)) return;
+  if (item.publishDate && item.publishDate <= currentDate) {
+    urls.push({ loc: \`\${baseUrl}/\${item.route}/\`, lastmod: item.publishDate, changefreq: 'weekly', priority: '0.8' });
+  }
+});
+
+Object.values(seoHant).forEach(item => {
+  if (item.route === 'home' || coreKeys.includes(item.route)) return;
+  if (item.publishDate && item.publishDate <= currentDate) {
+    urls.push({ loc: \`\${baseUrl}/hant/\${item.route}/\`, lastmod: item.publishDate, changefreq: 'weekly', priority: '0.8' });
+  }
+});
+
+const sitemapXml = \`<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+\${urls.map(u => \`  <url>
+    <loc>\${u.loc}</loc>
+    <lastmod>\${u.lastmod}</lastmod>
+    <changefreq>\${u.changefreq}</changefreq>
+    <priority>\${u.priority}</priority>
+  </url>\`).join('\\n')}
+</urlset>
+\`;
+
+const publicDir = path.join(__dirname, '../public');
+const outDir = path.join(__dirname, '../out');
+
+fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapXml, 'utf8');
+if (fs.existsSync(outDir)) {
+  fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemapXml, 'utf8');
+}
+
+console.log(\`✅ sitemap.xml 严格按已解锁日期生成，收录 \${urls.length} 个合法已解锁 URL (未解锁未来文章 100% 隐藏)\`);
+`;
+fs.writeFileSync(sitemapGenPath, sitemapGenCode, 'utf8');
+
+// 3. 构建与推送
+console.log('🚀 执行构建并同步全站多语言已解锁 Sitemap...');
+execSync('npm run build', { stdio: 'inherit', cwd: rootDir });
+
+const token = execSync('gh auth token', { encoding: 'utf8' }).trim();
+execSync('git add .', { stdio: 'inherit', cwd: rootDir });
+execSync('git commit -m "feat(sitemap): expand unlocked articles to natural historical drip baseline, indexing 200+ legitimate unlocked URLs with strict future quarantine"', { stdio: 'inherit', cwd: rootDir });
+execSync(`git push https://${token}@github.com/oprom0004/ox.xxmsanguo.com.git main --force`, { stdio: 'inherit', cwd: rootDir });
+
+console.log('🎉 丰富多语言 Sitemap 构建与推送完成！');

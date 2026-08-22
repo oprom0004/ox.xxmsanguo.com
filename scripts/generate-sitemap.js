@@ -31,7 +31,7 @@ const seoHant = extractKeywordsFromTs(hantPath);
 const baseUrl = 'https://ox.xxmsanguo.com';
 const currentDate = getCurrentDateString();
 
-// 核心柱子单页
+// 核心功能柱子单页
 const coreKeys = [
   'guanwang', 'app', 'diannao', 'wangye', 'zhuce',
   'denglu', 'anzhuo', 'pingguo', 'anzhuangbao',
@@ -40,58 +40,32 @@ const coreKeys = [
 
 let urls = [];
 
-// 1. 首页
-urls.push({
-  loc: `${baseUrl}/`,
-  lastmod: currentDate,
-  changefreq: 'daily',
-  priority: '1.0'
-});
-urls.push({
-  loc: `${baseUrl}/hant/`,
-  lastmod: currentDate,
-  changefreq: 'daily',
-  priority: '1.0'
-});
+// 1. 首页 (简体 + 繁体)
+urls.push({ loc: `${baseUrl}/`, lastmod: currentDate, changefreq: 'daily', priority: '1.0' });
+urls.push({ loc: `${baseUrl}/hant/`, lastmod: currentDate, changefreq: 'daily', priority: '1.0' });
 
-// 2. 核心功能页
+// 2. 隐私政策页 (简体 + 繁体)
+urls.push({ loc: `${baseUrl}/privacy-policy/`, lastmod: currentDate, changefreq: 'monthly', priority: '0.5' });
+urls.push({ loc: `${baseUrl}/hant/privacy-policy/`, lastmod: currentDate, changefreq: 'monthly', priority: '0.5' });
+
+// 3. 核心功能落地页 (简体 + 繁体)
 coreKeys.forEach(k => {
-  urls.push({
-    loc: `${baseUrl}/${k}/`,
-    lastmod: currentDate,
-    changefreq: 'daily',
-    priority: '0.9'
-  });
-  urls.push({
-    loc: `${baseUrl}/hant/${k}/`,
-    lastmod: currentDate,
-    changefreq: 'daily',
-    priority: '0.9'
-  });
+  urls.push({ loc: `${baseUrl}/${k}/`, lastmod: currentDate, changefreq: 'daily', priority: '0.9' });
+  urls.push({ loc: `${baseUrl}/hant/${k}/`, lastmod: currentDate, changefreq: 'daily', priority: '0.9' });
 });
 
-// 3. 严格只收录已解锁的长尾实操文章（publishDate <= currentDate）
+// 4. 严格收录截至今日已解锁发布的实操文章 (publishDate <= currentDate)
 Object.values(seoZh).forEach(item => {
   if (item.route === 'home' || coreKeys.includes(item.route)) return;
   if (item.publishDate && item.publishDate <= currentDate) {
-    urls.push({
-      loc: `${baseUrl}/${item.route}/`,
-      lastmod: item.publishDate,
-      changefreq: 'weekly',
-      priority: '0.8'
-    });
+    urls.push({ loc: `${baseUrl}/${item.route}/`, lastmod: item.publishDate, changefreq: 'weekly', priority: '0.8' });
   }
 });
 
 Object.values(seoHant).forEach(item => {
   if (item.route === 'home' || coreKeys.includes(item.route)) return;
   if (item.publishDate && item.publishDate <= currentDate) {
-    urls.push({
-      loc: `${baseUrl}/hant/${item.route}/`,
-      lastmod: item.publishDate,
-      changefreq: 'weekly',
-      priority: '0.8'
-    });
+    urls.push({ loc: `${baseUrl}/hant/${item.route}/`, lastmod: item.publishDate, changefreq: 'weekly', priority: '0.8' });
   }
 });
 
@@ -115,4 +89,4 @@ if (fs.existsSync(outDir)) {
   fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemapXml, 'utf8');
 }
 
-console.log(`✅ sitemap.xml 严格按已解锁日期生成，共计收录 ${urls.length} 个合法 URL (未解锁文章 0 收录)`);
+console.log(`✅ sitemap.xml 严格按已解锁日期生成，收录 ${urls.length} 个合法已解锁 URL (未解锁未来文章 100% 隐藏)`);
