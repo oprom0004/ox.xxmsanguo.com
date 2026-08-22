@@ -1,4 +1,15 @@
-"use client";
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
+
+// 1. 重构 Hero.tsx：彻底抛弃刺眼纯黄，转向 OKX 官方原生的纯黑白极简高级风，干掉所有无意义假洋文
+const heroPath = path.join(rootDir, 'src', 'components', 'Hero.tsx');
+const heroCode = `"use client";
 
 import { useConfig } from "../context/ConfigContext";
 import { SEO_KEYWORDS_MAP } from "../seoData";
@@ -184,3 +195,27 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
     </section>
   );
 }
+`;
+fs.writeFileSync(heroPath, heroCode, 'utf8');
+
+// 2. 优化 Navbar.tsx：将当前激活 tab 改为极简白底黑字或深灰白字，去除生硬黄色高亮
+const navPath = path.join(rootDir, 'src', 'components', 'Navbar.tsx');
+if (fs.existsSync(navPath)) {
+  let navContent = fs.readFileSync(navPath, 'utf8');
+  navContent = navContent
+    .replace(/bg-yellow-500 text-black/g, 'bg-white text-black font-bold')
+    .replace(/text-yellow-500/g, 'text-white')
+    .replace(/border-yellow-500/g, 'border-white');
+  fs.writeFileSync(navPath, navContent, 'utf8');
+}
+
+// 3. 构建并推送
+console.log('🚀 构建 OKX 经典极简黑白高级质感 UI 并推送到 GitHub...');
+execSync('npm run build', { stdio: 'inherit', cwd: rootDir });
+
+const token = execSync('gh auth token', { encoding: 'utf8' }).trim();
+execSync('git add .', { stdio: 'inherit', cwd: rootDir });
+execSync('git commit -m "feat(ui): redesign Hero and Nav to OKX native minimalist black-and-white theme, remove redundant fake tags and improve contrast"', { stdio: 'inherit', cwd: rootDir });
+execSync(`git push https://${token}@github.com/oprom0004/ox.xxmsanguo.com.git main --force`, { stdio: 'inherit', cwd: rootDir });
+
+console.log('🎉 极简高级风重构完成并已推送到 GitHub！');
