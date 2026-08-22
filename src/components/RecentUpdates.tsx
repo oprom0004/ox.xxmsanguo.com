@@ -23,9 +23,14 @@ export default function RecentUpdates({ locale = 'zh' }: RecentUpdatesProps) {
   const prefix = isHant ? "/hant" : "";
   const currentDate = getCurrentDateString();
 
-  // Get all scheduled articles (those with publishDate) that are published
+  const CORE_PILLAR_KEYS = new Set([
+    "home", "guanwang", "app", "diannao", "wangye", "zhuce", "denglu",
+    "anzhuo", "pingguo", "anzhuangbao", "xinshou-jiaocheng", "zhongwen", "xiazai"
+  ]);
+
+  // 严格过滤出真正的 365 篇拼音长 Slug 长尾实操文章
   const activeArticles = Object.values(seoData)
-    .filter(item => item.publishDate && item.publishDate <= currentDate)
+    .filter(item => !CORE_PILLAR_KEYS.has(item.route) && item.publishDate && item.publishDate <= currentDate)
     .sort((a, b) => b.publishDate!.localeCompare(a.publishDate!));
 
   // Cap at 6 articles for clean homepage layout
