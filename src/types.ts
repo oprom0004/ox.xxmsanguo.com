@@ -21,7 +21,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
   windowsDownloadUrl: "https://static.okx.com/upgradeapp/OKX-setup.exe",
   macIntelDownloadUrl: "https://static.okx.com/upgradeapp/OKX-mac-Intel.dmg",
   macM1DownloadUrl: "https://static.okx.com/upgradeapp/OKX-mac-Apple-Silicon.dmg",
-  officialMirrorUrl: "https://ox.xxmsanguo.com", // self URL
+  officialMirrorUrl: "https://ox.xxmsanguo.com",
   registerHelpContact: "https://t.me/ouxcex",
   announcement: "提示：本站仅整理访问入口与使用教程，不处理登录、交易或资金操作。",
 };
@@ -29,6 +29,29 @@ export const DEFAULT_CONFIG: SiteConfig = {
 export interface MirrorItem {
   name: string;
   url: string;
-  speed: string; // e.g. "12ms", "24ms"
+  speed: string;
   status: "fast" | "normal" | "slow";
+}
+
+export interface SeoPageData {
+  route: string;
+  tabLabel: string;
+  title: string;
+  description: string;
+  keywords: string;
+  heroBadge: string;
+  heroTitle: string;
+  heroSub: string;
+  customIntroTitle: string;
+  customIntroBody: string;
+  detailedSteps: {
+    step: number;
+    title: string;
+    desc: string;
+  }[];
+  targetedFaq: {
+    q: string;
+    a: string;
+  }[];
+  publishDate?: string;
 }
