@@ -403,8 +403,8 @@ export const SEO_KEYWORDS_MAP_HANT: Record<string, SeoPageData> = {
   },
   "zhongwen": {
     "route": "zhongwen",
-    "tabLabel": "中文版设置",
-    "title": "歐意OKX中文官方语言设置与CNY法币计价切换全流程指南",
+    "tabLabel": "中文版",
+    "title": "歐意OKX中文官方語言設置與CNY法幣計價切換全流程指南",
     "description": "指导用户如何在 App 与网页端一键切换为简体中文/繁体中文界面，将法币显示单位设定为 CNY，并快速唤出 24 小时中文在线客服。",
     "keywords": "欧意中文版, OKX语言设置, 简体中文切换, 人民币计价显示, 中文客服入口",
     "heroBadge": "中文全功能体验配置",
