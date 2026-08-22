@@ -87,10 +87,10 @@ export default function FaqSection({ currentRoute, locale = 'zh' }: FaqSectionPr
         {/* FAQ Accordion List */}
         <div className="space-y-4">
           
-          {/* 1. Targeted FAQs */}
-          {targetedFaq.map((item, index) => {
-            const key = `targeted-${index}`;
-            const isOpen = !!openIndexes[key];
+          {/* 1. Targeted Specific FAQs + General Platform FAQs */}
+          {[...targetedFaq, ...generalFaq].map((item, index) => {
+            const key = `faq-${index}`;
+            const isOpen = !!openIndexes[key] || index === 0;
             return (
               <div 
                 key={key}
