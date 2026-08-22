@@ -141,18 +141,18 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
 
           {/* 右侧：科技控制面板 */}
           <div className="lg:col-span-5 w-full">
-            <div className="bg-[#0b101c]/90 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
+            <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
               
-              <div className="pb-3 border-b border-zinc-800/80">
+              <div>
                 <h3 className="font-display font-bold text-base sm:text-lg text-white">{pageData.customIntroTitle}</h3>
-                <p className="text-zinc-400 text-xs mt-0.5">{pageData.customIntroBody}</p>
+                <p className="text-zinc-400 text-xs mt-1">{pageData.customIntroBody}</p>
               </div>
 
-              {/* 步骤列表 */}
-              <div className="space-y-3">
+              {/* 步骤列表 (无边框，采用极简自然微底) */}
+              <div className="space-y-2.5">
                 {(pageData.detailedSteps || []).map((step, idx) => (
-                  <div key={idx} className="flex gap-3.5 p-3.5 rounded-2xl bg-zinc-900/50 border border-zinc-800/70 hover:border-blue-500/30 transition-colors">
-                    <div className="w-6 h-6 rounded-lg bg-blue-500/10 border border-blue-500/25 text-blue-400 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  <div key={idx} className="flex gap-3.5 p-3.5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors">
+                    <div className="w-6 h-6 rounded-lg bg-blue-500/15 text-blue-400 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {step.step || idx + 1}
                     </div>
                     <div>
@@ -165,11 +165,11 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
                 ))}
               </div>
 
-              {/* 底部按钮 */}
+              {/* 底部按钮 (无生硬边框) */}
               <div className="pt-1">
                 <button 
                   data-cta="true"
-                  className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-750 hover:border-blue-500/40 text-xs text-blue-400 font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm"
+                  className="w-full py-3 rounded-xl bg-white/[0.04] hover:bg-blue-600/20 text-xs text-blue-400 hover:text-blue-300 font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
                 >
                   <span>{isHant ? "一鍵進入專屬通道" : "一键进入专属通道"}</span>
                   <ArrowRight size={13} />
