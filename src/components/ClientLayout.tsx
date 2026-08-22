@@ -32,7 +32,7 @@ export default function ClientLayout({ children, currentRoute, locale = 'zh' }: 
         <button
           type="button"
           data-cta="true"
-          className="w-full bg-white hover:bg-zinc-200 text-black font-extrabold py-3.5 rounded-xl flex items-center justify-center transition-colors shadow-lg shadow-white/5 cursor-pointer select-none"
+          className="w-full bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold shadow-lg shadow-amber-500/20 py-3.5 rounded-xl flex items-center justify-center transition-colors shadow-lg shadow-white/5 cursor-pointer select-none"
         >
           {locale === 'hant' ? '安全直達訪問通道' : '安全直达访问通道'}
         </button>

@@ -79,9 +79,9 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
   };
 
   return (
-    <section id="hero" className="relative min-h-[72vh] flex items-center justify-center py-12 md:py-20 overflow-hidden border-b border-zinc-900 bg-black">
-      {/* 极简深邃背景与微弱银白氛围光 */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-zinc-800/20 blur-[130px] rounded-full pointer-events-none"></div>
+    <section id="hero" className="relative min-h-[75vh] flex items-center justify-center py-12 md:py-18 overflow-hidden border-b border-zinc-850 bg-gradient-to-b from-[#080b11] via-[#0d121d] to-[#080b11]">
+      {/* 科技极光微弱光晕 */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[320px] bg-yellow-500/8 blur-[120px] rounded-full pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
@@ -89,20 +89,20 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
           {/* 左侧主要文案 */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             
-            {/* 极简状态 Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs text-zinc-300 font-medium mx-auto lg:mx-0 shadow-inner">
+            {/* 状态 Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/25 text-xs text-yellow-400 font-semibold mx-auto lg:mx-0 shadow-sm shadow-yellow-500/5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>{pageData.heroBadge}</span>
-              <span className="text-zinc-700">•</span>
+              <span className="text-zinc-600">•</span>
               <span className="text-zinc-400 font-mono text-[11px]">加密直连</span>
             </div>
 
             {/* 核心大标题 */}
             <div className="space-y-3">
-              <h1 className="font-display font-black text-3xl sm:text-4.5xl md:text-5.5xl text-white tracking-tight leading-[1.12] flex flex-col items-center lg:items-start text-center lg:text-left">
+              <h1 className="font-display font-black text-3xl sm:text-4.5xl md:text-5.5xl text-white tracking-tight leading-[1.14] flex flex-col items-center lg:items-start text-center lg:text-left">
                 {pageData.heroTitle.includes("|") ? (
                   pageData.heroTitle.split("|").map((part, idx) => (
-                    <span key={idx} className={idx > 0 ? "mt-1 text-zinc-300" : ""}>
+                    <span key={idx} className={idx > 0 ? "mt-1 text-zinc-200" : ""}>
                       {part.trim()}
                     </span>
                   ))
@@ -111,7 +111,7 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
                 )}
               </h1>
               {getSubTitle(currentRoute) && (
-                <p className="text-base sm:text-lg font-semibold text-zinc-400 tracking-wide font-sans leading-relaxed">
+                <p className="text-base sm:text-xl font-bold bg-gradient-to-r from-yellow-400 via-amber-300 to-amber-500 bg-clip-text text-transparent tracking-wide font-sans leading-relaxed">
                   {getSubTitle(currentRoute)}
                 </p>
               )}
@@ -122,41 +122,41 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
               {pageData.heroSub}
             </p>
 
-            {/* 行动按钮（OKX 经典纯白高质感按键） */}
+            {/* 行动按钮 */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <button 
                 data-cta="true"
-                className="w-full sm:w-fit flex items-center justify-center gap-2 bg-white hover:bg-zinc-200 text-black font-extrabold text-sm px-8 py-3.5 rounded-xl shadow-lg shadow-white/5 transition-all duration-200 active:scale-95 cursor-pointer"
+                className="w-full sm:w-fit flex items-center justify-center gap-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold text-sm px-8 py-3.5 rounded-xl shadow-lg shadow-yellow-500/20 transition-all duration-200 active:scale-95 cursor-pointer"
               >
-                <span>{isHant ? "立即安全訪問" : "立即安全访问"}</span>
+                <span>{isHant ? "安全直達訪問通道" : "安全直达访问通道"}</span>
                 <ArrowRight size={16} />
               </button>
 
-              <div className="flex items-center gap-2 text-xs text-zinc-500 font-mono">
-                <ShieldCheck className="w-4 h-4 text-zinc-400" />
-                <span>{isHant ? "端到端 256 位加密" : "端到端 256 位加密"}</span>
+              <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>{isHant ? "多節點加密線路" : "多节点加密线路"}</span>
               </div>
             </div>
           </div>
 
-          {/* 右侧：极简干净的 3 步排错与直达面板 */}
+          {/* 右侧：干净大气的 3 步排错与直达面板 */}
           <div className="lg:col-span-5 w-full">
-            <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl p-6 sm:p-7 shadow-xl space-y-5">
+            <div className="bg-[#0b0e14]/90 backdrop-blur-md border border-zinc-800 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
               
-              <div>
+              <div className="pb-3 border-b border-zinc-800/80">
                 <h3 className="font-display font-bold text-base sm:text-lg text-white">{pageData.customIntroTitle}</h3>
-                <p className="text-zinc-500 text-xs mt-1">{pageData.customIntroBody}</p>
+                <p className="text-zinc-400 text-xs mt-0.5">{pageData.customIntroBody}</p>
               </div>
 
               {/* 步骤列表 */}
               <div className="space-y-3">
                 {(pageData.detailedSteps || []).map((step, idx) => (
-                  <div key={idx} className="flex gap-3.5 p-3.5 rounded-xl bg-zinc-900/40 border border-zinc-900 hover:border-zinc-800 transition-colors">
-                    <div className="w-6 h-6 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-200 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  <div key={idx} className="flex gap-3.5 p-3.5 rounded-2xl bg-zinc-900/50 border border-zinc-800/70 hover:border-yellow-500/30 transition-colors">
+                    <div className="w-6 h-6 rounded-lg bg-yellow-500/10 border border-yellow-500/25 text-yellow-400 font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {step.step || idx + 1}
                     </div>
                     <div>
-                      <h4 className="text-zinc-200 text-xs font-bold">{step.title}</h4>
+                      <h4 className="text-zinc-100 text-xs font-bold">{step.title}</h4>
                       <p className="text-zinc-400 text-[11px] mt-0.5 leading-relaxed">
                         {step.desc}
                       </p>
@@ -165,13 +165,13 @@ export default function Hero({ currentRoute, locale = 'zh' }: HeroProps) {
                 ))}
               </div>
 
-              {/* 底部极简按钮 */}
-              <div className="pt-2">
+              {/* 底部按钮 */}
+              <div className="pt-1">
                 <button 
                   data-cta="true"
-                  className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-xs text-zinc-200 hover:text-white font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                  className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 hover:border-yellow-500/40 text-xs text-yellow-400 font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm"
                 >
-                  <span>{isHant ? "進入專屬直連通道" : "进入专属直连通道"}</span>
+                  <span>{isHant ? "一鍵進入專屬通道" : "一键进入专属通道"}</span>
                   <ArrowRight size={13} />
                 </button>
               </div>
