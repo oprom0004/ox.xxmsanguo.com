@@ -44,7 +44,6 @@ export default function DownloadGateway({
 }: DownloadGatewayProps) {
     const { config: localConfig } = useConfig();
     const [internalIsOpen, setInternalIsOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [config, setConfig] = useState<GatewayConfig | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
@@ -53,31 +52,36 @@ export default function DownloadGateway({
     const isControlled = typeof controlledIsOpen !== 'undefined';
     const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
 
-    useEffect(() => {
-        setMounted(true);
-        return () => setMounted(false);
-    }, []);
-
     const loadConfig = useCallback(async () => {
-        setIsLoading(true);
         setError(null);
         try {
             const data = await fetchGatewayConfig();
-            setConfig(data);
+            if (data && data.web && data.android) {
+                setConfig(data);
+            }
         } catch (err) {
-            console.error('Failed to load download config', err);
-            setError('获取下载链接失败，请稍后重试');
-        } finally {
-            setIsLoading(false);
+            setError('推荐线路暂时无法加载');
         }
     }, []);
 
-    // Effect to load config when opened (only on user click to avoid automated crawler detection)
     useEffect(() => {
-        if (isOpen && !config && !isLoading && !error) {
-            loadConfig();
+        setMounted(true);
+        loadConfig();
+        return () => setMounted(false);
+    }, [loadConfig]);
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
         }
-    }, [isOpen, config, isLoading, error, loadConfig]);
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
+
+
 
     const handleInternalOpen = () => {
         if (!isControlled) {
@@ -113,17 +117,6 @@ export default function DownloadGateway({
     };
 
     // Prevent scrolling
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [isOpen]);
-
     if (!mounted) return null;
 
     const modalContent = (
@@ -133,29 +126,10 @@ export default function DownloadGateway({
             <div className={styles.modal}>
                 <div className={styles.header}>
                     <h3 className={styles.title}>查看访问入口</h3>
-                    {isLoading && (
-                        <p className={styles.description}>
-                            正在加载访问选项...
-                        </p>
-                    )}
+
                 </div>
 
-                {isLoading ? (
-                    <div className={styles.loading}>
-                        <div className={styles.spinner}></div>
-                        <p>正在加载...</p>
-                    </div>
-                ) : error ? (
-                    <div className={styles.error}>
-                        <p>{error}</p>
-                        <button
-                            onClick={loadConfig}
-                            style={{ marginTop: '12px', padding: '6px 16px', background: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                        >
-                            重试
-                        </button>
-                    </div>
-                ) : config ? (
+                {config ? (
                     <>
                         {/* Domestic Group (Green/Orange Theme) */}
                         <div className={styles.group}>
@@ -236,7 +210,9 @@ export default function DownloadGateway({
                             已有账号的用户可直接登录。
                         </div>
                     </>
-                ) : null}
+                ) : error ? (
+                    <button type="button" onClick={loadConfig}>{error}，点此重试</button>
+                ) : <p role="status">正在获取推荐线路…</p>}
 
                 <button className={styles.closeButton} onClick={handleClose}>
                     关闭窗口

@@ -1,41 +1,41 @@
 import { GATEWAY_CONFIG } from '../config/gateway.config';
-import { FALLBACK_DATA, GatewayConfig } from '../config/fallback-data';
+import type { GatewayConfig } from '../config/fallback-data';
 
 export type { GatewayConfig };
 
+async function fetchWithTimeout(url: string, timeoutMs: number = 3000): Promise<any> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+            cache: 'no-store',
+            signal: controller.signal,
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return await response.json();
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 /**
  * Fetch download links configuration from the Gateway API.
- * 自动轮询配置的多个 Worker 节点。
- * 当所有节点都失败时，才降级到本地 Fallback 数据。
+ * 多个节点并发竞速（Promise.any），并在 3 秒内超时截断，绝不卡顿。
  */
 export async function fetchGatewayConfig(): Promise<GatewayConfig> {
     const { endpoints } = GATEWAY_CONFIG.gateway;
+    const validEndpoints = (endpoints || []).filter(Boolean);
 
-    if (!endpoints || endpoints.length === 0) {
-        return FALLBACK_DATA;
-    }
-
-    for (const url of endpoints) {
-        if (!url) continue;
-
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' },
-                cache: 'no-store',
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                return data;
-            } else {
-                console.warn(`Gateway fetch failed for ${url}: ${response.status}`);
-            }
-        } catch (error) {
-            console.warn(`Gateway connection error for ${url}:`, error);
-        }
-    }
-
-    console.error('All gateway endpoints failed. Falling back to local data.');
-    return FALLBACK_DATA;
+    return Promise.any(validEndpoints.map(async url => {
+        const rawData = await fetchWithTimeout(url);
+        const config = window.location.hostname.includes('oyweb') ? (rawData.oyweb || rawData) : rawData;
+        if (!config?.android?.china || !config?.web?.china) throw new Error('Missing recommended route');
+        return config;
+    }));
 }
