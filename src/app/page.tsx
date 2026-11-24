@@ -12,7 +12,7 @@ import RecentUpdates from "@/components/RecentUpdates";
 export function generateMetadata(): Metadata {
   const pageData = SEO_KEYWORDS_MAP.home;
   return {
-    title: pageData.title,
+    title: { absolute: `欧易|${pageData.title}` },
     description: pageData.description,
     keywords: pageData.keywords,
     alternates: {

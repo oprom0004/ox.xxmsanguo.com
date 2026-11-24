@@ -1,6 +1,14 @@
 import "./globals.css";
+import type { Metadata } from "next";
 import { ConfigProvider } from "@/context/ConfigContext";
 import { GatewayProvider } from "@/features/DownloadGateway/GatewayContext";
+
+export const metadata: Metadata = {
+  title: {
+    default: "欧易|ox.xxmsanguo.com",
+    template: "欧易|%s",
+  },
+};
 
 export default function RootLayout({
   children,
